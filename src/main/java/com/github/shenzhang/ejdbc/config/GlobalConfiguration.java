@@ -1,7 +1,7 @@
 package com.github.shenzhang.ejdbc.config;
 
-import temple.sql.config.product.ProductConfigurationFactory;
-import temple.sql.config.product.SqliteConfigurationFactory;
+import com.github.shenzhang.ejdbc.config.product.ProductConfigurationFactory;
+import com.github.shenzhang.ejdbc.config.product.SqliteConfigurationFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

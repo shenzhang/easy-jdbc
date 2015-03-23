@@ -1,6 +1,6 @@
 package com.github.shenzhang.ejdbc.config.product;
 
-import temple.sql.config.Configuration;
+import com.github.shenzhang.ejdbc.config.Configuration;
 
 import java.sql.DatabaseMetaData;
 

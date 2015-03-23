@@ -2,12 +2,12 @@ package com.github.shenzhang.ejdbc.rowMapper;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import temple.sql.config.feature.NameConvertor;
-import temple.sql.meta.DatabaseMetaData;
-import temple.sql.meta.TableMetaData;
-import temple.sql.rowMapper.primitive.IntegerRowMapper;
-import temple.sql.rowMapper.primitive.LongRowMapper;
-import temple.sql.rowMapper.primitive.StringRowMapper;
+import com.github.shenzhang.ejdbc.config.feature.NameConvertor;
+import com.github.shenzhang.ejdbc.meta.DatabaseMetaData;
+import com.github.shenzhang.ejdbc.meta.TableMetaData;
+import com.github.shenzhang.ejdbc.rowMapper.primitive.IntegerRowMapper;
+import com.github.shenzhang.ejdbc.rowMapper.primitive.LongRowMapper;
+import com.github.shenzhang.ejdbc.rowMapper.primitive.StringRowMapper;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static temple.sql.config.GlobalConfiguration.getGlobalConfiguration;
+import static com.github.shenzhang.ejdbc.config.GlobalConfiguration.getGlobalConfiguration;
 
 /**
  * User: shenzhang

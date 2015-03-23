@@ -1,13 +1,13 @@
 package com.github.shenzhang.ejdbc.config;
 
 import org.springframework.beans.factory.InitializingBean;
-import temple.sql.config.feature.GeneratedKeyFetcher;
-import temple.sql.config.feature.NameConvertor;
-import temple.sql.config.feature.PageCreator;
+import com.github.shenzhang.ejdbc.config.feature.GeneratedKeyFetcher;
+import com.github.shenzhang.ejdbc.config.feature.NameConvertor;
+import com.github.shenzhang.ejdbc.config.feature.PageCreator;
 
 import javax.sql.DataSource;
 
-import static temple.sql.config.GlobalConfiguration.getGlobalConfiguration;
+import static com.github.shenzhang.ejdbc.config.GlobalConfiguration.getGlobalConfiguration;
 
 /**
  * User: shenzhang

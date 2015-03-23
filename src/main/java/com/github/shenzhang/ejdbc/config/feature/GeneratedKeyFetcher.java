@@ -1,6 +1,6 @@
 package com.github.shenzhang.ejdbc.config.feature;
 
-import temple.sql.JdbcTemplateEnhancement;
+import com.github.shenzhang.ejdbc.JdbcTemplateEnhancement;
 
 /**
  * User: shenzhang

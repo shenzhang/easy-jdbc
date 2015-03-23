@@ -1,6 +1,6 @@
 package com.github.shenzhang.ejdbc.config.impl.postgresql;
 
-import temple.sql.config.feature.PageCreator;
+import com.github.shenzhang.ejdbc.config.feature.PageCreator;
 
 /**
  * User: shenzhang

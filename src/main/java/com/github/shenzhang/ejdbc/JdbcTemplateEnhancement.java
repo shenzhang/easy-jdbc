@@ -6,16 +6,16 @@ import org.apache.commons.beanutils.BeanUtilsBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import temple.sql.builder.InsertSqlBuilder;
-import temple.sql.builder.UpdateSqlBuilder;
-import temple.sql.config.Configuration;
-import temple.sql.config.GlobalConfiguration;
-import temple.sql.config.feature.GeneratedKeyFetcher;
-import temple.sql.config.feature.NameConvertor;
-import temple.sql.meta.DatabaseMetaData;
-import temple.sql.meta.TableMetaData;
-import temple.sql.rowMapper.QueryInformation;
-import temple.sql.rowMapper.RowMapperFactory;
+import com.github.shenzhang.ejdbc.builder.InsertSqlBuilder;
+import com.github.shenzhang.ejdbc.builder.UpdateSqlBuilder;
+import com.github.shenzhang.ejdbc.config.Configuration;
+import com.github.shenzhang.ejdbc.config.GlobalConfiguration;
+import com.github.shenzhang.ejdbc.config.feature.GeneratedKeyFetcher;
+import com.github.shenzhang.ejdbc.config.feature.NameConvertor;
+import com.github.shenzhang.ejdbc.meta.DatabaseMetaData;
+import com.github.shenzhang.ejdbc.meta.TableMetaData;
+import com.github.shenzhang.ejdbc.rowMapper.QueryInformation;
+import com.github.shenzhang.ejdbc.rowMapper.RowMapperFactory;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,8 +25,8 @@ import java.util.Set;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
-import static temple.sql.Util.getTableName;
-import static temple.sql.config.GlobalConfiguration.getGlobalConfiguration;
+import static com.github.shenzhang.ejdbc.Util.getTableName;
+import static com.github.shenzhang.ejdbc.config.GlobalConfiguration.getGlobalConfiguration;
 
 /**
  * User: shenzhang

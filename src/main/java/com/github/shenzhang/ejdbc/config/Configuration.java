@@ -1,9 +1,9 @@
 package com.github.shenzhang.ejdbc.config;
 
-import temple.sql.config.feature.GeneratedKeyFetcher;
-import temple.sql.config.feature.NameConvertor;
-import temple.sql.config.feature.PageCreator;
-import temple.sql.config.impl.DefaultNameConvertor;
+import com.github.shenzhang.ejdbc.config.feature.GeneratedKeyFetcher;
+import com.github.shenzhang.ejdbc.config.feature.NameConvertor;
+import com.github.shenzhang.ejdbc.config.feature.PageCreator;
+import com.github.shenzhang.ejdbc.config.impl.DefaultNameConvertor;
 
 /**
  * User: shenzhang

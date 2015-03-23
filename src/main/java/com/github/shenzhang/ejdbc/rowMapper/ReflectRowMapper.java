@@ -1,9 +1,9 @@
 package com.github.shenzhang.ejdbc.rowMapper;
 
 import org.springframework.jdbc.core.RowMapper;
-import temple.sql.rowMapper.extractor.DateValueExtractor;
-import temple.sql.rowMapper.extractor.DefaultResultSetValueExtractor;
-import temple.sql.rowMapper.extractor.ResultSetValueExtractor;
+import com.github.shenzhang.ejdbc.rowMapper.extractor.DateValueExtractor;
+import com.github.shenzhang.ejdbc.rowMapper.extractor.DefaultResultSetValueExtractor;
+import com.github.shenzhang.ejdbc.rowMapper.extractor.ResultSetValueExtractor;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;

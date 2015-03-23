@@ -1,8 +1,8 @@
 package com.github.shenzhang.ejdbc.config.product;
 
-import temple.sql.config.Configuration;
-import temple.sql.config.impl.sqlite.SqliteGeneratedKeyFetcher;
-import temple.sql.config.impl.sqlite.SqlitePageCreator;
+import com.github.shenzhang.ejdbc.config.Configuration;
+import com.github.shenzhang.ejdbc.config.impl.sqlite.SqliteGeneratedKeyFetcher;
+import com.github.shenzhang.ejdbc.config.impl.sqlite.SqlitePageCreator;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;

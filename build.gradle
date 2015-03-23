@@ -1,12 +1,10 @@
-group = 'io.github.shenzhang'
+group = 'com.github.shenzhang'
 version = '1.0.0-SNAPSHOT'
-description = 'gradle template'
+description = 'a persistence java tool based on spring-jdbc'
 
 ext {
     springVersion = '4.0.3.RELEASE'
 }
-
-apply plugin: 'jetty'
 
 buildscript {
     repositories {
@@ -41,6 +39,7 @@ dependencies {
             'com.google.guava:guava:18.0',
             'log4j:log4j:1.2.17',
 
+            'commons-beanutils:commons-beanutils:1.9.2',
             "org.springframework:spring-jdbc:$springVersion"
     )
 

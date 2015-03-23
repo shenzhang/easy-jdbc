@@ -1,7 +1,7 @@
 package com.github.shenzhang.ejdbc.config.impl.sqlite;
 
-import temple.sql.JdbcTemplateEnhancement;
-import temple.sql.config.feature.GeneratedKeyFetcher;
+import com.github.shenzhang.ejdbc.JdbcTemplateEnhancement;
+import com.github.shenzhang.ejdbc.config.feature.GeneratedKeyFetcher;
 
 /**
  * User: shenzhang

@@ -1,6 +1,6 @@
 package com.github.shenzhang.ejdbc;
 
-import temple.sql.annotation.Table;
+import com.github.shenzhang.ejdbc.annotation.Table;
 
 /**
  * User: shenzhang

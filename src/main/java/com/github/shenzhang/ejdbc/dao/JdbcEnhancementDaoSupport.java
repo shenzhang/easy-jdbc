@@ -2,7 +2,7 @@ package com.github.shenzhang.ejdbc.dao;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
-import temple.sql.JdbcTemplateEnhancement;
+import com.github.shenzhang.ejdbc.JdbcTemplateEnhancement;
 
 /**
  * User: shenzhang

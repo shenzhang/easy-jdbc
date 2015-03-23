@@ -1,6 +1,6 @@
 package com.github.shenzhang.ejdbc.config.impl;
 
-import temple.sql.config.feature.NameConvertor;
+import com.github.shenzhang.ejdbc.config.feature.NameConvertor;
 
 /**
  * User: shenzhang

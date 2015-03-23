@@ -3,7 +3,7 @@ package com.github.shenzhang.ejdbc.meta;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import temple.sql.config.feature.PageCreator;
+import com.github.shenzhang.ejdbc.config.feature.PageCreator;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static com.google.common.collect.Maps.newConcurrentMap;
 import static com.google.common.collect.Maps.newHashMap;
-import static temple.sql.config.GlobalConfiguration.getGlobalConfiguration;
+import static com.github.shenzhang.ejdbc.config.GlobalConfiguration.getGlobalConfiguration;
 
 /**
  * User: shenzhang
