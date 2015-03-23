@@ -1,21 +1,20 @@
 package com.github.shenzhang.ejdbc.rowMapper;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import com.github.shenzhang.ejdbc.config.feature.NameConvertor;
 import com.github.shenzhang.ejdbc.meta.DatabaseMetaData;
 import com.github.shenzhang.ejdbc.meta.TableMetaData;
-import com.github.shenzhang.ejdbc.rowMapper.primitive.IntegerRowMapper;
-import com.github.shenzhang.ejdbc.rowMapper.primitive.LongRowMapper;
-import com.github.shenzhang.ejdbc.rowMapper.primitive.StringRowMapper;
+import com.github.shenzhang.ejdbc.rowMapper.complex.ReflectRowMapper;
+import com.github.shenzhang.ejdbc.rowMapper.extractor.ResultSetValueExtractor;
+import com.github.shenzhang.ejdbc.rowMapper.simple.SimpleTypeRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
-import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-import static com.google.common.collect.Maps.newHashMap;
 import static com.github.shenzhang.ejdbc.config.GlobalConfiguration.getGlobalConfiguration;
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * User: shenzhang
@@ -25,36 +24,40 @@ import static com.github.shenzhang.ejdbc.config.GlobalConfiguration.getGlobalCon
 public class RowMapperFactory {
     private DatabaseMetaData metaData;
     private RowMapperCache rowMapperCache = new RowMapperCache();
-    private static Map<Class<?>, RowMapper> simpleTypes = newHashMap();
-
-    static {
-        simpleTypes.put(Integer.class, new IntegerRowMapper());
-        simpleTypes.put(int.class, new IntegerRowMapper());
-        simpleTypes.put(Long.class, new LongRowMapper());
-        simpleTypes.put(long.class, new LongRowMapper());
-        simpleTypes.put(String.class, new StringRowMapper());
-    }
 
     public RowMapperFactory(JdbcTemplate jdbcTemplate) {
         this.metaData = new DatabaseMetaData(jdbcTemplate);
     }
 
     public <T> RowMapper<T> createRowMapper(QueryInformation<T> queryInformation) {
-        DataSource dataSource = queryInformation.getDataSource();
         Class<T> clazz = queryInformation.getClazz();
-        String sql = queryInformation.getSql();
 
-        RowMapper<T> rowMapper = simpleTypes.get(clazz);
+        RowMapper<T> rowMapper = createSimpleRowMapper(clazz);
         if (rowMapper != null) {
             return rowMapper;
         }
 
-        rowMapper = rowMapperCache.get(queryInformation);
+        return createComplexRowMapper(queryInformation);
+    }
+
+    private <T> RowMapper<T> createSimpleRowMapper(Class<T> clazz) {
+        ResultSetValueExtractor resultSetValueExtractor = ReflectRowMapper.map.get(clazz);
+        if (resultSetValueExtractor == null) {
+            return null;
+        }
+
+        return new SimpleTypeRowMapper<T>(resultSetValueExtractor);
+    }
+
+    private <T> RowMapper<T> createComplexRowMapper(QueryInformation<T> queryInformation) {
+        RowMapper<T> rowMapper = rowMapperCache.get(queryInformation);
         if (rowMapper == null) {
-            TableMetaData sqlColumns = metaData.getSqlColumns(sql, queryInformation.getParameters());
+            TableMetaData sqlColumns = metaData.getSqlColumns(queryInformation.getSql(), queryInformation.getParameters());
             List<String> columns = sqlColumns.getColumns();
             Map<String, Field> map = newHashMap();
-            NameConvertor nameConvertor = getGlobalConfiguration().getConfiguration(dataSource).getNameConvertor();
+            NameConvertor nameConvertor = getGlobalConfiguration().getConfiguration(queryInformation.getDataSource()).getNameConvertor();
+
+            Class<T> clazz = queryInformation.getClazz();
             for (String column : columns) {
                 String property = nameConvertor.column2Field(column);
                 try {

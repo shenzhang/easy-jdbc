@@ -22,7 +22,8 @@ public class DefaultResultSetValueExtractor implements ResultSetValueExtractor {
     @Override
     public Object extract(ResultSet rs, String column) {
         try {
-            return resultSetMethod.invoke(rs, column);
+            Object value = resultSetMethod.invoke(rs, column);
+            return rs.wasNull() ? null : value;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
