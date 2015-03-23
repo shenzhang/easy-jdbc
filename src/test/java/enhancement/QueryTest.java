@@ -5,6 +5,7 @@ import model.User;
 import org.junit.Test;
 
 import java.util.Calendar;
+import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
@@ -66,5 +67,15 @@ public class QueryTest extends AbstractIntegrationTest {
         executeNativeSql("insert into t_user(id, name, age) values(1, 'zhang shen', 30)");
         String name = jdbcTemplateEnhancement.queryForObject(String.class, "select name from t_user");
         assertThat(name, is("zhang shen"));
+    }
+
+    @Test
+    public void shouldRetrieveList() throws Exception {
+        executeNativeSql("insert into t_user(id, name, age) values(1, 'zhang shen', 30)");
+        executeNativeSql("insert into t_user(id, name, age) values(2, 'zhang shen', 30)");
+        executeNativeSql("insert into t_user(id, name, age) values(3, 'zhang shen', 30)");
+
+        List<User> users = jdbcTemplateEnhancement.queryForList(User.class, "select * from t_user");
+        assertThat(users.size(), is(3));
     }
 }

@@ -81,3 +81,4 @@ def defaultProperty(name, defaultValue) {
 }
 
 apply from: 'database.gradle'
+apply from: 'repo.gradle'
