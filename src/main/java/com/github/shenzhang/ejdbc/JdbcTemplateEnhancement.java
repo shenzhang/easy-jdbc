@@ -1,11 +1,5 @@
 package com.github.shenzhang.ejdbc;
 
-import com.google.common.base.Strings;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.BeanUtilsBean;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import com.github.shenzhang.ejdbc.builder.InsertSqlBuilder;
 import com.github.shenzhang.ejdbc.builder.UpdateSqlBuilder;
 import com.github.shenzhang.ejdbc.config.Configuration;
@@ -16,17 +10,22 @@ import com.github.shenzhang.ejdbc.meta.DatabaseMetaData;
 import com.github.shenzhang.ejdbc.meta.TableMetaData;
 import com.github.shenzhang.ejdbc.rowMapper.QueryInformation;
 import com.github.shenzhang.ejdbc.rowMapper.RowMapperFactory;
+import com.google.common.base.Strings;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.BeanUtilsBean;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.github.shenzhang.ejdbc.config.GlobalConfiguration.getGlobalConfiguration;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
-import static com.github.shenzhang.ejdbc.Util.getTableName;
-import static com.github.shenzhang.ejdbc.config.GlobalConfiguration.getGlobalConfiguration;
 
 /**
  * User: shenzhang
@@ -50,10 +49,10 @@ public class JdbcTemplateEnhancement {
         return jdbcTemplate;
     }
 
-    public void insert(Object object, String... excludeColumns) {
-        Map<String, Object> columnsAndValues = calculateFinalColumnsAndValues(object, excludeColumns);
+    public void insert(String table, Object object, String... excludeColumns) {
+        Map<String, Object> columnsAndValues = calculateFinalColumnsAndValues(table, object, excludeColumns);
 
-        InsertSqlBuilder build = new InsertSqlBuilder(Util.getTableName(object.getClass()));
+        InsertSqlBuilder build = new InsertSqlBuilder(table);
         List<Object> parameters = newArrayList();
         for (Map.Entry<String, Object> column : columnsAndValues.entrySet()) {
             build.appendColumn(column.getKey());
@@ -63,12 +62,11 @@ public class JdbcTemplateEnhancement {
         jdbcTemplate.update(build.create(), parameters.toArray());
     }
 
-    public long insertAndReturnGeneratedKey(String keyColumn, Object object, String... excludeColumns) {
-        Map<String, Object> columnsAndValues = calculateFinalColumnsAndValues(object, excludeColumns);
+    public long insertAndReturnGeneratedKey(String table, Object object, String keyColumn, String... excludeColumns) {
+        Map<String, Object> columnsAndValues = calculateFinalColumnsAndValues(table, object, excludeColumns);
 
         SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate);
-        String tableName = Util.getTableName(object.getClass());
-        insert.setTableName(tableName);
+        insert.setTableName(table);
         insert.setGeneratedKeyName(keyColumn);
         insert.usingColumns(columnsAndValues.keySet().toArray(new String[columnsAndValues.size()]));
 
@@ -79,35 +77,33 @@ public class JdbcTemplateEnhancement {
             Configuration configuration = getGlobalConfiguration().getConfiguration(jdbcTemplate.getDataSource());
             GeneratedKeyFetcher keyFetcher = configuration.getKeyFetcher();
             if (keyFetcher != null) {
-                insert(object, excludeColumns);
-                return keyFetcher.getGeneratedKey(this, tableName, keyColumn);
+                insert(table, object, excludeColumns);
+                return keyFetcher.getGeneratedKey(this, table, keyColumn);
             } else {
                 throw new RuntimeException(e);
             }
         }
     }
 
-    public void update(Object object, String where, Object... whereParameters) {
-        this.update(object, null, where, whereParameters);
+    public void update(String tableName, Object object, String where, Object... whereParameters) {
+        this.update(tableName, object, null, where, whereParameters);
     }
 
-    public void update(Object object, Collection<String> excludeColumns, String where, Object... whereParameters) {
-        Map<String, Object> columnsAndValues = calculateFinalColumnsAndValues(object, excludeColumns);
-
-        String table = getTableName(object.getClass());
-        UpdateSqlBuilder build = new UpdateSqlBuilder(table);
+    public void update(String table, Object object, Collection<String> excludeColumns, String where, Object... whereParameters) {
+        Map<String, Object> columnsAndValues = calculateFinalColumnsAndValues(table, object, excludeColumns);
+        UpdateSqlBuilder builder = new UpdateSqlBuilder(table);
         List<Object> parameters = newArrayList();
         for (Map.Entry<String, Object> entry : columnsAndValues.entrySet()) {
-            build.appendColumn(entry.getKey());
+            builder.appendColumn(entry.getKey());
             parameters.add(entry.getValue());
         }
 
         if (!Strings.isNullOrEmpty(where)) {
-            build.setWhere(where);
+            builder.setWhere(where);
             parameters.addAll(newArrayList(whereParameters));
         }
 
-        jdbcTemplate.update(build.create(), parameters.toArray());
+        jdbcTemplate.update(builder.create(), parameters.toArray());
     }
 
     public <T> List<T> queryForList(Class<T> clazz, String sql, Object... parameters) {
@@ -125,7 +121,7 @@ public class JdbcTemplateEnhancement {
         return new JdbcTempalteAppender(this);
     }
 
-    private Map<String, Object> calculateFinalColumnsAndValues(Object object, Collection<String> excludeColumns) {
+    private Map<String, Object> calculateFinalColumnsAndValues(String table, Object object, Collection<String> excludeColumns) {
         Set<String> excludesSet = newHashSet();
         if (excludeColumns != null) {
             for (String column : excludeColumns) {
@@ -133,11 +129,11 @@ public class JdbcTemplateEnhancement {
             }
         }
 
-        return calculateFinalColumnsAndValues(object, excludesSet.toArray(new String[excludesSet.size()]));
+        return calculateFinalColumnsAndValues(table, object, excludesSet.toArray(new String[excludesSet.size()]));
     }
 
     // return maps like: column -> field value
-    private Map<String, Object> calculateFinalColumnsAndValues(Object object, String... excludeColumns) {
+    private Map<String, Object> calculateFinalColumnsAndValues(String table, Object object, String... excludeColumns) {
         Set<String> excludesSet = newHashSet();
         if (excludeColumns != null) {
             for (String column : excludeColumns) {
@@ -152,7 +148,6 @@ public class JdbcTemplateEnhancement {
             throw new RuntimeException(e);
         }
 
-        String table = getTableName(object.getClass());
         TableMetaData tableColumns = metaData.getTableColumns(table);
         Set<String> exitingColumns = newHashSet(tableColumns.getColumns());
 
