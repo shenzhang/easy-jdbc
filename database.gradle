@@ -1,0 +1,98 @@
+import groovy.sql.Sql
+
+apply from: "config/$profile/db.gradle"
+
+ext {
+    propertyFile = new File("config/$profile/database.properties")
+    schemaFile = new File("config/$profile/schema.sql")
+}
+
+configurations {
+    driver {
+        extendsFrom testCompile
+    }
+}
+
+def prepareClassloader() {
+    URLClassLoader loader = GroovyObject.class.classLoader
+    configurations.driver.each { File file ->
+        loader.addURL(file.toURL())
+    }
+}
+
+task createDB << {
+    println "Begin create database using profile [$profile], the database properties are:"
+    println "driver.class: $driverClass"
+    println "database.url: $databaseUrl"
+    println "username: $username"
+    println "password: $password"
+    println ''
+
+
+    prepareClassloader()
+
+    def sql = Sql.newInstance(databaseUrl, username, password, driverClass)
+    sql.connection.setAutoCommit(false)
+
+    try {
+        beforeCreateDB(sql)
+
+        doCreateSchema(sql)
+
+        afterCreateDB(sql)
+
+        sql.commit()
+        println '\nCommit database change'
+    } catch (Exception e) {
+        sql.rollback()
+        println 'Rollback database change'
+        throw e
+    } finally {
+        sql.close()
+    }
+
+    println 'Done!'
+}
+
+def getDatabaseProperties() {
+    Properties properties = new Properties();
+    propertyFile.withInputStream {
+        properties.load(it);
+    }
+    return properties
+}
+
+def getDriverClass() {
+    databaseProperties.getProperty("driver.class")
+}
+
+def getDatabaseUrl() {
+    databaseProperties.getProperty("database.url")
+}
+
+def getUsername() {
+    databaseProperties.getProperty("username")
+}
+
+def getPassword() {
+    databaseProperties.getProperty("password")
+}
+
+def executeSql(connection, sql) {
+    sql = sql.trim()
+    if (sql.length() > 0) {
+        println(sql)
+        connection.execute(sql)
+    }
+}
+
+def doCreateSchema(connection) {
+    def sql = new StringBuilder()
+    schemaFile.eachLine {
+        sql.append(it)
+    }
+
+    sql.toString().split(';').each() {
+        executeSql(connection, it)
+    }
+}

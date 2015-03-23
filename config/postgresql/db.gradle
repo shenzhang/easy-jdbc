@@ -1,0 +1,10 @@
+ext {
+    beforeCreateDB = { connection ->
+        connection.execute('alter schema public rename to ejdbc')
+        connection.execute('create schema public')
+    }
+
+    afterCreateDB = { connection ->
+        connection.execute('drop schema ejdbc cascade')
+    }
+}
