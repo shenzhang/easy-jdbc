@@ -1,10 +1,10 @@
 import groovy.sql.Sql
 
-apply from: "config/$profile/db.gradle"
+apply from: "config/$database/db.gradle"
 
 ext {
-    propertyFile = new File("config/$profile/database.properties")
-    schemaFile = new File("config/$profile/schema.sql")
+    propertyFile = new File("config/$database/database.properties")
+    schemaFile = new File("config/$database/schema.sql")
 }
 
 configurations {
@@ -21,7 +21,7 @@ def prepareClassloader() {
 }
 
 task createDB << {
-    println "Begin create database using profile [$profile], the database properties are:"
+    println "Begin create database using database profile [$database], the database properties are:"
     println "driver.class: $driverClass"
     println "database.url: $databaseUrl"
     println "username: $username"

@@ -1,41 +1,99 @@
-apply plugin: 'maven-publish'
+group = 'com.github.shenzhang'
+version = '0.1.0-SNAPSHOT'
+//version = '0.1.0'
+description = 'a persistence java tool based on spring-jdbc'
 
-task sourceJar(type: Jar) {
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
+    classifier = 'sources'
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     from 'build/docs/javadoc'
+    classifier = 'javadoc'
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+}
 
-            artifact sourceJar {
-                classifier "sources"
-            }
-
-            artifact javadocJar {
-                classifier "javadoc"
-            }
-        }
-    }
-
+uploadArchives {
     repositories {
-        maven {
-            if (project.version.endsWith('-SNAPSHOT')) {
-                url "http://localhost:8081/nexus/content/repositories/snapshots"
-            } else {
-                url "http://localhost:8081/nexus/content/repositories/releases"
+        mavenDeployer {
+            def repositoryUrl = 'http://localhost:8081/nexus/content/repositories/releases'
+            def snapshotRepositoryUrl = 'http://localhost:8081/nexus/content/repositories/snapshots'
+            def username = repoUser
+            def password = repoPassword
+
+            if (profile == 'release') {
+                repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+                snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
+
+                if (project.version.endsWith('SNAPSHOT')) {
+                    error "Please change arifact verion to release convention, current verions: $version"
+                }
+
+                if (!project.hasProperty('ossUser') || !project.hasProperty('ossPassword')) {
+                    error 'Please provide OSS credential [ossUser & ossPassword] to your gradle.properties'
+                }
+
+                username = ossUser
+                password = ossPassword
             }
 
-            credentials {
-                username defaultProperty('repoUser', 'admin')
-                password defaultProperty('repoPassword', 'admin123')
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
+            repository(url: repositoryUrl) {
+                authentication(userName: username, password: password)
+            }
+
+            snapshotRepository(url: snapshotRepositoryUrl) {
+                authentication(userName: username, password: password);
+            }
+
+            pom.project {
+                name project.name
+                packaging 'jar'
+                description project.description
+                url 'https://github.com/shenzhang/easy-jdbc'
+
+                scm {
+                    url 'https://github.com/shenzhang/easy-jdbc.git'
+                    connection 'https://github.com/shenzhang/easy-jdbc.git'
+                    developerConnection 'https://github.com/shenzhang/easy-jdbc.git'
+                }
+
+                licenses {
+                    license {
+                        name 'MIT Licence'
+                        distribution 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'zshen'
+                        name 'Zhang Shen'
+                    }
+                }
             }
         }
     }
+}
+
+signing {
+    sign configurations.archives
+}
+
+def error(message) {
+    throw new GradleScriptException(message, null)
+}
+
+task hello << {
+    println project.hasProperty('ossUser')
 }
