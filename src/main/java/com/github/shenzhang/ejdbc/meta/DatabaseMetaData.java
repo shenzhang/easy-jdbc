@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static com.google.common.collect.Maps.newConcurrentMap;
 import static com.google.common.collect.Maps.newHashMap;
-import static com.github.shenzhang.ejdbc.config.GlobalConfiguration.getGlobalConfiguration;
+import static com.github.shenzhang.ejdbc.config.GlobalConfiguration.get;
 
 /**
  * User: shenzhang
@@ -28,7 +28,7 @@ public class DatabaseMetaData {
 
     public DatabaseMetaData(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.pageCreator = getGlobalConfiguration().getConfiguration(jdbcTemplate.getDataSource()).getPageCreator();
+        this.pageCreator = get().getConfiguration(jdbcTemplate.getDataSource()).getPageCreator();
     }
 
     public TableMetaData getTableColumns(String table) {
@@ -77,7 +77,6 @@ public class DatabaseMetaData {
             int count = metaData.getColumnCount();
             for (int i = 1; i <= count; i++) {
                 String name = metaData.getColumnName(i);
-//                int type = metaData.getColumnType(i);
                 value.put(name, new ColumnMetaData(name, null));
             }
 

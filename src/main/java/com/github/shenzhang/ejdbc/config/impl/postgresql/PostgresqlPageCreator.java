@@ -11,7 +11,7 @@ public class PostgresqlPageCreator implements PageCreator {
     @Override
     public String createPage(String sql, int offset, int limit) {
         StringBuilder sb = new StringBuilder();
-        sb.append("select * from (").append(sql).append(")");
+        sb.append("select * from (").append(sql).append(") as page");
         sb.append(" offset ").append(offset).append(" limit ").append(limit);
         return sb.toString();
     }

@@ -1,8 +1,8 @@
 package com.github.shenzhang.ejdbc.rowMapper.extractor;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 /**
  * User: shenzhang
@@ -13,7 +13,7 @@ public class DateValueExtractor implements ResultSetValueExtractor {
     @Override
     public Object extract(ResultSet rs, String column) {
         try {
-            Date date = rs.getDate(column);
+            Timestamp date = rs.getTimestamp(column);
             return date == null ? null : new java.util.Date(date.getTime());
         } catch (SQLException e) {
             throw new RuntimeException(e);

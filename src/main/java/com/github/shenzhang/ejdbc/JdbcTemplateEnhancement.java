@@ -6,10 +6,12 @@ import com.github.shenzhang.ejdbc.config.Configuration;
 import com.github.shenzhang.ejdbc.config.GlobalConfiguration;
 import com.github.shenzhang.ejdbc.config.feature.GeneratedKeyFetcher;
 import com.github.shenzhang.ejdbc.config.feature.NameConvertor;
+import com.github.shenzhang.ejdbc.config.feature.PageCreator;
 import com.github.shenzhang.ejdbc.meta.DatabaseMetaData;
 import com.github.shenzhang.ejdbc.meta.TableMetaData;
 import com.github.shenzhang.ejdbc.rowMapper.QueryInformation;
 import com.github.shenzhang.ejdbc.rowMapper.RowMapperFactory;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.BeanUtilsBean;
@@ -17,12 +19,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.github.shenzhang.ejdbc.config.GlobalConfiguration.getGlobalConfiguration;
+import static com.github.shenzhang.ejdbc.config.GlobalConfiguration.get;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
@@ -42,7 +45,7 @@ public class JdbcTemplateEnhancement {
         this.jdbcTemplate = template;
         this.metaData = new DatabaseMetaData(jdbcTemplate);
         this.rowMapperFactory = new RowMapperFactory(jdbcTemplate);
-        this.nameConvertor = GlobalConfiguration.getGlobalConfiguration().getConfiguration(jdbcTemplate.getDataSource()).getNameConvertor();
+        this.nameConvertor = GlobalConfiguration.get().getConfiguration(jdbcTemplate.getDataSource()).getNameConvertor();
     }
 
     JdbcTemplate getJdbcTemplate() {
@@ -63,6 +66,11 @@ public class JdbcTemplateEnhancement {
     }
 
     public long insertAndReturnGeneratedKey(String table, Object object, String keyColumn, String... excludeColumns) {
+        if (!Strings.isNullOrEmpty(keyColumn)) {
+            ArrayList<String> columnList = newArrayList(excludeColumns);
+            columnList.add(keyColumn);
+            excludeColumns = columnList.toArray(new String[columnList.size()]);
+        }
         Map<String, Object> columnsAndValues = calculateFinalColumnsAndValues(table, object, excludeColumns);
 
         SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate);
@@ -74,7 +82,7 @@ public class JdbcTemplateEnhancement {
             Number number = insert.executeAndReturnKey(columnsAndValues);
             return number.longValue();
         } catch (Exception e) {
-            Configuration configuration = getGlobalConfiguration().getConfiguration(jdbcTemplate.getDataSource());
+            Configuration configuration = get().getConfiguration(jdbcTemplate.getDataSource());
             GeneratedKeyFetcher keyFetcher = configuration.getKeyFetcher();
             if (keyFetcher != null) {
                 insert(table, object, excludeColumns);
@@ -112,9 +120,22 @@ public class JdbcTemplateEnhancement {
         return jdbcTemplate.query(sql, parameters, rowMapper);
     }
 
+    public <T> List<T> pageForList(Class<T> clazz, int offset, int limit, String sql, Object... parameters) {
+        QueryInformation<T> queryInformation = new QueryInformation<T>(jdbcTemplate.getDataSource(), clazz, sql, parameters);
+        RowMapper<T> rowMapper = rowMapperFactory.createRowMapper(queryInformation);
+
+        PageCreator pageCreator = GlobalConfiguration.get().getConfiguration(jdbcTemplate.getDataSource()).getPageCreator();
+        Preconditions.checkNotNull(pageCreator, "Can't find any page creator for this data source");
+        return jdbcTemplate.query(pageCreator.createPage(sql, offset, limit), parameters, rowMapper);
+    }
+
     public <T> T queryForObject(Class<T> clazz, String sql, Object... parameters) {
         List<T> list = queryForList(clazz, sql, parameters);
         return list.isEmpty() ? null : list.get(0);
+    }
+
+    public int execute(String sql, Object... parameters) {
+        return jdbcTemplate.update(sql, parameters);
     }
 
     public JdbcTempalteAppender createAppender() {

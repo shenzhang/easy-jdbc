@@ -7,7 +7,7 @@ import com.github.shenzhang.ejdbc.config.feature.PageCreator;
 
 import javax.sql.DataSource;
 
-import static com.github.shenzhang.ejdbc.config.GlobalConfiguration.getGlobalConfiguration;
+import static com.github.shenzhang.ejdbc.config.GlobalConfiguration.get;
 
 /**
  * User: shenzhang
@@ -22,7 +22,7 @@ public class SpringConfigBean implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        Configuration configuration = getGlobalConfiguration().getConfiguration(dataSource);
+        Configuration configuration = get().getConfiguration(dataSource);
         if (pageCreator != null) {
             configuration.setPageCreator(pageCreator);
         }

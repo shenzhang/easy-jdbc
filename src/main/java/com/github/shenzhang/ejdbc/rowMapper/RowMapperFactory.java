@@ -13,7 +13,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.shenzhang.ejdbc.config.GlobalConfiguration.getGlobalConfiguration;
+import static com.github.shenzhang.ejdbc.config.GlobalConfiguration.get;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
@@ -55,7 +55,7 @@ public class RowMapperFactory {
             TableMetaData sqlColumns = metaData.getSqlColumns(queryInformation.getSql(), queryInformation.getParameters());
             List<String> columns = sqlColumns.getColumns();
             Map<String, Field> map = newHashMap();
-            NameConvertor nameConvertor = getGlobalConfiguration().getConfiguration(queryInformation.getDataSource()).getNameConvertor();
+            NameConvertor nameConvertor = get().getConfiguration(queryInformation.getDataSource()).getNameConvertor();
 
             Class<T> clazz = queryInformation.getClazz();
             for (String column : columns) {

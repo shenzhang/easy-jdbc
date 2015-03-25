@@ -4,7 +4,9 @@ import base.AbstractIntegrationTest;
 import model.User;
 import org.junit.Test;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
@@ -77,5 +79,13 @@ public class QueryTest extends AbstractIntegrationTest {
 
         List<User> users = jdbcTemplateEnhancement.queryForList(User.class, "select * from t_user");
         assertThat(users.size(), is(3));
+    }
+
+    @Test
+    public void shouldRetrieveDateTimeCorrectly() throws Exception {
+        executeNativeSql("insert into t_user(id, name, age, dob) values(1, 'zhang shen', 30, '2015-2-11 10:10:10')");
+        Date date = jdbcTemplateEnhancement.queryForObject(Date.class, "select dob from t_user where id = 1");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        assertThat(format.format(date), is("2015-02-11 10:10:10"));
     }
 }

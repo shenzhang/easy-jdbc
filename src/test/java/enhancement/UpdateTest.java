@@ -60,10 +60,15 @@ public class UpdateTest extends AbstractIntegrationTest {
 
     @Test
     public void shouldUpdateDateSuccessful() throws Exception {
-
+        User user = query();
+        Date now = new Date();
+        user.setDob(now);
+        jdbcTemplateEnhancement.update("t_user", user, "id = ?", user.getId());
+        user = query();
+        assertThat(user.getDob(), is(now));
     }
 
     private User query() {
-        return jdbcTemplateEnhancement.queryForObject(User.class, "select * from t_user");
+        return jdbcTemplateEnhancement.queryForObject(User.class, "select * from t_user where id = 1");
     }
 }
