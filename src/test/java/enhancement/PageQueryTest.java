@@ -25,11 +25,20 @@ public class PageQueryTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldRetrievePagedResultsFrom11To20() throws Exception {
+    public void shouldReturnPagedResultsFrom11To20() throws Exception {
         List<User> users = jdbcTemplateEnhancement.pageForList(User.class, 10, 10, "select * from t_user order by id");
         assertThat(users.size(), is(10));
         for (int i = 0; i < 10; i++) {
             assertThat(users.get(i).getId(), is(i + 11L));
+        }
+    }
+
+    @Test
+    public void shouldReturnFirst5Records() throws Exception {
+        List<User> users = jdbcTemplateEnhancement.pageForList(User.class, 0, 5, "select * from t_user order by id");
+        assertThat(users.size(), is(5));
+        for (int i = 0; i < 5; i++) {
+            assertThat(users.get(i).getId(), is(i + 1L));
         }
     }
 }

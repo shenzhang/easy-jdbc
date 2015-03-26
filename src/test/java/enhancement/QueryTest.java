@@ -44,7 +44,7 @@ public class QueryTest extends AbstractIntegrationTest {
         assertThat(user.getName(), is("zhang shen"));
         assertNull(user.getNullValue());
 
-        executeNativeSql("insert into t_user values(2, 'bruce', 29)");
+        executeNativeSql("insert into t_user(id, name, age) values(2, 'bruce', 29)");
         user = jdbcTemplateEnhancement.queryForObject(User.class, "select * from t_user where id=?", 2);
         assertNotNull(user);
         assertThat(user.getId(), is(2L));

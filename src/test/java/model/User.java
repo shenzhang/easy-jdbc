@@ -10,7 +10,7 @@ import java.util.Date;
  * Time: 2:32 PM
  */
 public class User {
-    private long id;
+    private long id = 1;
     private String name;
     private int age;
     private Date dob;

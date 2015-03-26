@@ -1,5 +1,6 @@
 package com.github.shenzhang.ejdbc.config;
 
+import com.github.shenzhang.ejdbc.config.product.MySqlConfigurationFactory;
 import com.github.shenzhang.ejdbc.config.product.PgConfigurationFactory;
 import com.github.shenzhang.ejdbc.config.product.ProductConfigurationFactory;
 import com.github.shenzhang.ejdbc.config.product.SqliteConfigurationFactory;
@@ -28,6 +29,7 @@ public class GlobalConfiguration {
     private GlobalConfiguration() {
         productFactoryList.add(new SqliteConfigurationFactory());
         productFactoryList.add(new PgConfigurationFactory());
+        productFactoryList.add(new MySqlConfigurationFactory());
     }
 
     public static GlobalConfiguration get() {
