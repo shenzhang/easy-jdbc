@@ -1,9 +1,0 @@
-ext {
-    beforeCreateDB = { connection ->
-
-    }
-
-    afterCreateDB = { connection ->
-
-    }
-}
