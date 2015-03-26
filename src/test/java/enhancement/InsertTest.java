@@ -16,7 +16,6 @@ public class InsertTest extends AbstractIntegrationTest {
     @Test
     public void shouldInsertAllMatchingFields() throws Exception {
         User user = new User();
-//        user.setId(100);
         user.setName("gege");
         user.setAge(20);
         jdbcTemplateEnhancement.insert("t_user", user);
@@ -29,7 +28,6 @@ public class InsertTest extends AbstractIntegrationTest {
     @Test
     public void shouldInsertWithoutExcludedFields() throws Exception {
         User user = new User();
-//        user.setId(100);
         user.setName("gege");
         user.setAge(20);
         user.setNullValue(7);
