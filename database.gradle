@@ -1,7 +1,5 @@
 import groovy.sql.Sql
 
-apply from: "config/$database/db.gradle"
-
 ext {
     propertyFile = new File("config/$database/database.properties")
     schemaFile = new File("config/$database/schema.sql")
@@ -28,18 +26,13 @@ task createDB << {
     println "password: $password"
     println ''
 
-
     prepareClassloader()
 
     def sql = Sql.newInstance(databaseUrl, username, password, driverClass)
     sql.connection.setAutoCommit(false)
 
     try {
-        beforeCreateDB(sql)
-
         doCreateSchema(sql)
-
-        afterCreateDB(sql)
 
         sql.commit()
         println '\nCommit database change'

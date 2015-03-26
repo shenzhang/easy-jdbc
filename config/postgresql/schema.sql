@@ -1,3 +1,5 @@
+drop table if exists t_user cascade;
+
 create table t_user
 (
   id bigserial primary key,
