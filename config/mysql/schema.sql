@@ -5,6 +5,7 @@ create table t_user
   id int not null auto_increment,
   name varchar(255) not null,
   age integer not null,
+  dob timestamp,
   null_value integer,
 
   primary key(id)
