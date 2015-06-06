@@ -1,6 +1,6 @@
 group = 'com.github.shenzhang'
-version = '0.1.0-SNAPSHOT'
-//version = '0.1.0'
+version = '0.1.3-SNAPSHOT'
+//version = '0.1.1'
 description = 'a persistence java tool based on spring-jdbc'
 
 apply plugin: 'maven'
@@ -92,8 +92,4 @@ signing {
 
 def error(message) {
     throw new GradleScriptException(message, null)
-}
-
-task hello << {
-    println project.hasProperty('ossUser')
 }
