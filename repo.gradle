@@ -1,6 +1,5 @@
 group = 'com.github.shenzhang'
 version = '0.1.3-SNAPSHOT'
-//version = '0.1.1'
 description = 'a persistence java tool based on spring-jdbc'
 
 apply plugin: 'maven'
@@ -22,6 +21,9 @@ artifacts {
     archives javadocJar
 }
 
+// upload artifacts to remote repository
+// if profile is 'dev' (default), deploy to local nexus
+// if profile is 'release', deploy to oss
 uploadArchives {
     repositories {
         mavenDeployer {

@@ -1,6 +1,7 @@
 package enhancement;
 
 import base.AbstractIntegrationTest;
+import com.github.shenzhang.ejdbc.JdbcTempalteAppender;
 import model.User;
 import org.junit.Test;
 
